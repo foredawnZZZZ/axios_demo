@@ -3,7 +3,8 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-
+import Ajax from './server/ajax'
+Vue.prototype.$Ajax = Ajax
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */

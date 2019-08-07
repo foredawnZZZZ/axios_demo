@@ -36,14 +36,11 @@ export default {
     }
   },
   methods: {
-    getList () {
-      this.instance.get('/contactList')
-        .then(res => {
-          let data = res.data
-          if (data.code === 200) {
-            this.list = data.data
-          }
-        })
+    async getList () {
+      let res = await this.$Ajax.getContartList()
+      if (res.code === 200) {
+        this.list = res.data
+      }
     },
     onAdd () {
       this.showEdit = true
@@ -54,28 +51,32 @@ export default {
       this.isEdit = true
       this.editingContact = info
     },
-    onSave (info) {
+    async onSave (info) {
       if (this.isEdit) {
-        this.instance.put('/contact/edit', info)
-          .then(res => {
-            console.log(res)
-            if (res.data.code === 200) {
-              this.getList()
-              this.showEdit = false
-            }
-          })
+        let res = await this.$Ajax.EditContartJson(info)
+        if (res.code === 200) {
+          this.getList()
+          this.showEdit = false
+          this.editingContact = {}
+        }
       } else {
-        this.instance.post('/contact/new/json', info)
-          .then(res => {
-            console.log(res)
-            if (res.data.code === 200) {
-              this.getList()
-              this.showEdit = false
-            }
-          })
+        let ret = await this.$Ajax.newContartJson(info)
+        if (ret.code === 200) {
+          this.getList()
+          this.showEdit = false
+          this.editingContact = {}
+        }
       }
     },
-    onDelete (info) {
+    async onDelete (info) {
+      let res = await this.$Ajax.DeleteContart({
+        id: info.id
+      })
+      if (res.code === 200) {
+        this.getList()
+        this.showEdit = false
+      }
+
       this.instance.delete('/contact', {
         params: {
           id: info.id
